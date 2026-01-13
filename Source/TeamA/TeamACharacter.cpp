@@ -42,6 +42,12 @@ ATeamACharacter::ATeamACharacter()
 	// Configure character movement
 	GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
 	GetCharacterMovement()->AirControl = 0.5f;
+
+	// Set up overlap events
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ATeamACharacter::OnOverlapBegin);
+
+	GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &ATeamACharacter::OnOverlapEnd);
+
 }
 
 void ATeamACharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -59,6 +65,11 @@ void ATeamACharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 		// Looking/Aiming
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ATeamACharacter::LookInput);
 		EnhancedInputComponent->BindAction(MouseLookAction, ETriggerEvent::Triggered, this, &ATeamACharacter::LookInput);
+
+		// Interacting
+		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &ATeamACharacter::Interact);
+		EnhancedInputComponent->BindAction(ExitWorkstationAction, ETriggerEvent::Triggered, this, &ATeamACharacter::ExitWorkstation);
+
 	}
 	else
 	{
@@ -117,4 +128,71 @@ void ATeamACharacter::DoJumpEnd()
 {
 	// pass StopJumping to the character
 	StopJumping();
+}
+
+
+void ATeamACharacter::OnOverlapBegin(
+	UPrimitiveComponent* OverlappedComponent,
+	AActor* OtherActor,
+	UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex,
+	bool bFromSweep,
+	const FHitResult& SweepResult)
+{
+	OverlappingWorkstation = Cast<AWorkstation>(OtherActor);
+	if (OverlappingWorkstation)
+	{
+		// You can add additional logic here if needed when overlapping begins
+		UE_LOG(LogTeamA, Log, TEXT("Overlapping Workstation: %s"), *OverlappingWorkstation->GetName());
+	}
+}
+
+void ATeamACharacter::OnOverlapEnd(
+	UPrimitiveComponent* OverlappedComponent,
+	AActor* OtherActor,
+	UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex)
+{
+	if (OtherActor == OverlappingWorkstation)
+	{
+		OverlappingWorkstation = nullptr;
+	}
+}
+
+
+void ATeamACharacter::Interact()
+{
+	if (CurrentWorkstation || !OverlappingWorkstation)
+		return;
+
+	CurrentWorkstation = OverlappingWorkstation;
+
+	// Disable movement
+	GetCharacterMovement()->DisableMovement();
+
+	// Switch camera
+	FViewTargetTransitionParams Params;
+	Params.BlendTime = 0.35f;
+
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	PC->SetViewTarget(CurrentWorkstation, Params);
+
+	CurrentWorkstation->Enter(this);
+}
+
+void ATeamACharacter::ExitWorkstation()
+{
+	if (!CurrentWorkstation)
+		return;
+
+	APlayerController* PC = Cast<APlayerController>(GetController());
+
+	FViewTargetTransitionParams Params;
+	Params.BlendTime = 0.35f;
+	PC->SetViewTarget(this, Params);
+
+	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+
+	CurrentWorkstation->Exit(this);
+	CurrentWorkstation = nullptr;
 }

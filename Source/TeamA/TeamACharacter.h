@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
+#include "Workstation.h"
 #include "TeamACharacter.generated.h"
 
 class UInputComponent;
@@ -48,9 +49,44 @@ protected:
 	/** Mouse Look Input Action */
 	UPROPERTY(EditAnywhere, Category ="Input")
 	class UInputAction* MouseLookAction;
+
+	/** Interact Input Action */
+	UPROPERTY(EditAnywhere, Category = "Input")
+	class UInputAction* InteractAction;
+
+	/** Exit Workstation Input Action */
+	UPROPERTY(EditAnywhere, Category = "Input")
+	class UInputAction* ExitWorkstationAction;
 	
 public:
 	ATeamACharacter();
+
+	UPROPERTY()
+	AWorkstation* CurrentWorkstation;
+
+	UPROPERTY()
+	AWorkstation* OverlappingWorkstation;
+
+	void Interact();
+	void ExitWorkstation();
+
+	UFUNCTION()
+	void OnOverlapBegin(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult& SweepResult
+	);
+
+	UFUNCTION()
+	void OnOverlapEnd(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex
+	);
 
 protected:
 
