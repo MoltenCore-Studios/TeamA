@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
+#include "DrawDebugHelpers.h"
 #include "Workstation.h"
 
 // Sets default values
@@ -47,6 +48,38 @@ void AWorkstation::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	// Draw debug box for interaction volume
+	FVector BoxLocation = InteractionVolume->GetComponentLocation();
+	FRotator BoxRotation = InteractionVolume->GetComponentRotation();
+	FVector BoxExtent = InteractionVolume->GetScaledBoxExtent();
+	DrawDebugBox(
+		GetWorld(),
+		BoxLocation,
+		BoxExtent,
+		BoxRotation.Quaternion(),
+		FColor::Green,
+		false,
+		-1.f,
+		0,
+		2.f
+	);
+
+	// Draw debug arrow for camera point
+	FVector ArrowStart = CameraPoint->GetComponentLocation();
+	FVector ArrowEnd = ArrowStart + CameraPoint->GetForwardVector() * 50.f;
+	DrawDebugDirectionalArrow(
+		GetWorld(),
+		ArrowStart,
+		ArrowEnd,
+		10.f,
+		FColor::Blue,
+		false,
+		-1.f,
+		0,
+		2.f
+	);
+
+
 }
 
 void AWorkstation::Enter(ACharacter* Character)
@@ -63,3 +96,6 @@ void AWorkstation::CalcCamera(float DeltaTime, FMinimalViewInfo& OutResult)
     OutResult.Rotation = CameraPoint->GetComponentRotation();
     OutResult.FOV = 90.f;
 }
+
+// Draw debug box for interaction volume
+
