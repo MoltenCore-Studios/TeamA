@@ -1,12 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
+#include "DrawDebugHelpers.h"
 #include "Workstation.h"
 
 // Sets default values
 AWorkstation::AWorkstation()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 
@@ -31,7 +31,6 @@ AWorkstation::AWorkstation()
 	{
 		Mesh->SetStaticMesh(CubeMesh.Object);
 	}
-
 }
 
 // Called when the game starts or when spawned
@@ -47,14 +46,48 @@ void AWorkstation::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	// Draw debug box for interaction volume
+	FVector BoxLocation = InteractionVolume->GetComponentLocation();
+	FRotator BoxRotation = InteractionVolume->GetComponentRotation();
+	FVector BoxExtent = InteractionVolume->GetScaledBoxExtent();
+	DrawDebugBox(
+		GetWorld(),
+		BoxLocation,
+		BoxExtent,
+		BoxRotation.Quaternion(),
+		FColor::Green,
+		false,
+		-1.f,
+		0,
+		2.f
+	);
+
+	// Draw debug arrow for camera point
+	FVector ArrowStart = CameraPoint->GetComponentLocation();
+	FVector ArrowEnd = ArrowStart + CameraPoint->GetForwardVector() * 50.f;
+	DrawDebugDirectionalArrow(
+		GetWorld(),
+		ArrowStart,
+		ArrowEnd,
+		10.f,
+		FColor::Blue,
+		false,
+		-1.f,
+		0,
+		2.f
+	);
+
+
 }
 
 void AWorkstation::Enter(ACharacter* Character)
 {
+
 }
 
 void AWorkstation::Exit(ACharacter* Character)
 {
+
 }
 
 void AWorkstation::CalcCamera(float DeltaTime, FMinimalViewInfo& OutResult)

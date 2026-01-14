@@ -55,10 +55,6 @@ void ATeamACharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
-		// Jumping
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ATeamACharacter::DoJumpStart);
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ATeamACharacter::DoJumpEnd);
-
 		// Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ATeamACharacter::MoveInput);
 
@@ -116,18 +112,6 @@ void ATeamACharacter::DoMove(float Right, float Forward)
 		AddMovementInput(GetActorRightVector(), Right);
 		AddMovementInput(GetActorForwardVector(), Forward);
 	}
-}
-
-void ATeamACharacter::DoJumpStart()
-{
-	// pass Jump to the character
-	Jump();
-}
-
-void ATeamACharacter::DoJumpEnd()
-{
-	// pass StopJumping to the character
-	StopJumping();
 }
 
 
