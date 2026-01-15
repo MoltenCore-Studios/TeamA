@@ -15,6 +15,11 @@ class UForgingWidget : public UUserWidget
     GENERATED_BODY()
 
 public:
+	UPROPERTY(meta = (BindWidget))
+	class UCanvasPanel* Canvas;
+	FVector2D GetCanvasSize() const;
+
+
     UPROPERTY(meta = (BindWidget))
     class UTextBlock* ForgePrompt;
 
@@ -36,5 +41,5 @@ public:
 	void SetTarget_0Position(float x, float y);
 
 
-	FVector2D GetCanvasSize() const;
+
 };

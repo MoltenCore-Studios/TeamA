@@ -4,6 +4,7 @@
 #include "Components/ProgressBar.h"
 #include "Components/Image.h"
 #include "Components/CanvasPanelSlot.h"
+#include "Components/CanvasPanel.h"
 #include "ForgingWidget.h"
 
 void UForgingWidget::UpdateForgePrompt(const FString& NewText)
@@ -76,9 +77,10 @@ void UForgingWidget::SetTarget_0Position(float x, float y)
 
 FVector2D UForgingWidget::GetCanvasSize() const
 {
-	if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(Target_0->Slot))
+	// Return the resolution of the canvas panel
+	if (Canvas)
 	{
-		return CanvasSlot->GetSize();
+		return Canvas->GetCachedGeometry().GetLocalSize();
 	}
 	return FVector2D::ZeroVector;
 }
