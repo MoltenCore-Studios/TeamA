@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/BoxComponent.h"
+#include "Components/ArrowComponent.h"
 #include "Workstation.generated.h"
 
 UCLASS()
@@ -28,6 +29,10 @@ public:
 
 	// Array of pickup actors that are in this workstations inventory
 	TArray<class APickup*> Inventory;
+
+	//Arrow Component
+	UPROPERTY(VisibleAnywhere)
+	UArrowComponent* ArrowComp;
 
 
 protected:
