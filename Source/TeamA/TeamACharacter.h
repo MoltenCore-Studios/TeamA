@@ -54,6 +54,10 @@ protected:
 	/** Exit Workstation Input Action */
 	UPROPERTY(EditAnywhere, Category = "Input")
 	class UInputAction* ExitWorkstationAction;
+
+	/** pickup input action */
+	UPROPERTY(EditAnywhere, Category = "Input")
+	class UInputAction* PickupAction;
 	
 public:
 	ATeamACharacter();

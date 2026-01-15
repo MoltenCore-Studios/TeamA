@@ -73,7 +73,7 @@ void ATeamACharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 		EnhancedInputComponent->BindAction(ExitWorkstationAction, ETriggerEvent::Triggered, this, &ATeamACharacter::ExitWorkstation);
 
 		// Pickup
-		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &ATeamACharacter::PickupItem);
+		EnhancedInputComponent->BindAction(PickupAction, ETriggerEvent::Started, this, &ATeamACharacter::PickupItem);
 
 	}
 	else
@@ -171,6 +171,12 @@ void ATeamACharacter::Interact()
 	PC->SetViewTarget(CurrentWorkstation, Params);
 
 	CurrentWorkstation->Enter(this);
+
+	// Disable item pickup input while at workstation
+
+
+
+
 }
 
 void ATeamACharacter::ExitWorkstation()
@@ -233,6 +239,8 @@ APickup* ATeamACharacter::GetPickupInView()
 
 void ATeamACharacter::PickupItem()
 {
+	if (CurrentWorkstation) { return; }
+
 	if (HeldItem)
 	{
 		
