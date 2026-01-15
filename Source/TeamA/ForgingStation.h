@@ -43,6 +43,7 @@ protected:
 	TArray<float> CurrentForgingPattern;
 	
 	bool isEntered;
+	bool isForging;
 
 	UPROPERTY()
 	UEnhancedInputComponent* CachedEnhancedInput = nullptr;

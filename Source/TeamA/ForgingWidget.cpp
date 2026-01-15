@@ -23,6 +23,26 @@ void UForgingWidget::ShowForgePrompt(bool bShow)
 	}
 }
 
+void UForgingWidget::ShowCrosshair(bool bShow)
+{
+	if (Crosshair)
+	{
+		Crosshair->SetVisibility(bShow ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+	}
+}
+
+void UForgingWidget::SetCrosshairPosition(float x, float y)
+{
+	if (Crosshair)
+	{
+		UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(Crosshair->Slot);
+		if (CanvasSlot)
+		{
+			CanvasSlot->SetPosition(FVector2D(x, y));
+		}
+	}
+}
+
 void UForgingWidget::UpdateHammerBar_0(float Progress)
 {
 	if (HammerBar_0)
@@ -53,6 +73,18 @@ void UForgingWidget::SetHammerBar_0Target(float NewTarget)
 {
 	// Implementation depends on how the target is represented in the UI.
 	// This is a placeholder for setting a target marker on the progress bar.
+}
+
+void UForgingWidget::SetHammerBar_0Position(float x, float y)
+{
+	if (HammerBar_0)
+	{
+		UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(HammerBar_0->Slot);
+		if (CanvasSlot)
+		{
+			CanvasSlot->SetPosition(FVector2D(x, y));
+		}
+	}
 }
 
 void UForgingWidget::ShowTarget_0(bool bShow)
