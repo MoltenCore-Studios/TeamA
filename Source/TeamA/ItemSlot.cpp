@@ -12,9 +12,7 @@ AItemSlot::AItemSlot()
     SocketPoint = CreateDefaultSubobject<USceneComponent>(TEXT("SocketPoint"));
     RootComponent = SocketPoint;
 
-    SocketMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SocketMesh"));
-    SocketMesh->SetupAttachment(RootComponent);
-    SocketMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 
     bIsOccupied = false;
     AttachedItem = nullptr;
@@ -24,6 +22,7 @@ AItemSlot::AItemSlot()
     InteractionVolume = CreateDefaultSubobject<UBoxComponent>(TEXT("InteractionVolume"));
     InteractionVolume->SetupAttachment(RootComponent);
     InteractionVolume->SetCollisionProfileName(TEXT("BlockAll"));
+	InteractionVolume->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
     InteractionVolume->SetGenerateOverlapEvents(true);
     DrawDebugBox(GetWorld(), SocketPoint->GetComponentLocation(), FVector(20.f), FColor::Green, false, 2.f);
 
@@ -43,8 +42,8 @@ bool AItemSlot::AttachItem(APickup* Item)
 
     // Attach item to socket
     Item->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-    Item->CollisionMesh->SetSimulatePhysics(false);
-    Item->CollisionMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    Item->InteractionVolume->SetSimulatePhysics(false);
+    Item->InteractionVolume->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
     Item->AttachToComponent(
         SocketPoint,
@@ -79,8 +78,8 @@ void AItemSlot::DetachItem()
         return;
 
     AttachedItem->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-    AttachedItem->CollisionMesh->SetSimulatePhysics(true);
-    AttachedItem->CollisionMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+    AttachedItem->InteractionVolume->SetSimulatePhysics(true);
+    AttachedItem->InteractionVolume->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
     AttachedItem = nullptr;
     bIsOccupied = false;

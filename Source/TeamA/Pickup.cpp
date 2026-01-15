@@ -10,23 +10,25 @@ APickup::APickup()
 	PrimaryActorTick.bCanEverTick = true;
 
 
-	// Create mesh component
-	CollisionMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CollisionMesh"));
 
-	// simulate physics
-	CollisionMesh->SetSimulatePhysics(true);
-	// Generate overlap events
-	CollisionMesh->SetGenerateOverlapEvents(true);
-	// Enable collision
-	CollisionMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	RootComponent = CollisionMesh;
+	InteractionVolume = CreateDefaultSubobject<UBoxComponent>(TEXT("InteractionVolume"));
+	RootComponent = InteractionVolume;
+
+
+	InteractionVolume->SetCollisionProfileName(TEXT("BlockAll"));
+	InteractionVolume->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	InteractionVolume->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+	InteractionVolume->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+	InteractionVolume->SetGenerateOverlapEvents(true);
+	InteractionVolume->SetSimulatePhysics(true);
+	InteractionVolume->SetEnableGravity(true);
+
 }
 
 // Called when the game starts or when spawned
 void APickup::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame

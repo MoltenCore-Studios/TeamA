@@ -243,7 +243,7 @@ void ATeamACharacter::PickupItem()
 
 	if (HeldItem)
 	{
-		
+
 		// Line trace or overlap to detect socket
 		FVector Start = FirstPersonCameraComponent->GetComponentLocation();
 		FVector End = Start + (FirstPersonCameraComponent->GetForwardVector() * PickupRange);
@@ -260,18 +260,22 @@ void ATeamACharacter::PickupItem()
 			AItemSlot* Slot = Cast<AItemSlot>(Hit.GetActor());
 			if (Slot && Slot->AttachItem(HeldItem))
 			{
-				HeldItem->CollisionMesh->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+				HeldItem->InteractionVolume->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 				HeldItem = nullptr;
 				return;
 			}
 		}
-		
+
 
 		// If no socket hit, drop normally
-		HeldItem->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-		HeldItem->CollisionMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		HeldItem->CollisionMesh->SetSimulatePhysics(true);
-		HeldItem->CollisionMesh->SetEnableGravity(true);
+		HeldItem->GetRootComponent()->DetachFromComponent(
+			FDetachmentTransformRules::KeepWorldTransform
+		);
+
+
+		HeldItem->InteractionVolume->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		HeldItem->InteractionVolume->SetSimulatePhysics(true);
+		HeldItem->InteractionVolume->SetEnableGravity(true);
 
 		HeldItem = nullptr;
 		return;
@@ -279,20 +283,26 @@ void ATeamACharacter::PickupItem()
 
 
 	APickup* Pickup = GetPickupInView();
-	if (!Pickup) {return;}
+	if (!Pickup) { return; }
 
 	HeldItem = Pickup;
 
 	// Disable physics
-	Pickup->CollisionMesh->SetSimulatePhysics(false);
-	Pickup->CollisionMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	Pickup->CollisionMesh->SetEnableGravity(false);
+	Pickup->InteractionVolume->SetSimulatePhysics(false);
+	Pickup->InteractionVolume->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	Pickup->InteractionVolume->SetEnableGravity(false);
 
 	// Attach to hold point
 	Pickup->AttachToComponent(
 		HoldPoint,
-		FAttachmentTransformRules::SnapToTargetNotIncludingScale
-	);
+		FAttachmentTransformRules::FAttachmentTransformRules(
+			EAttachmentRule::SnapToTarget,
+			EAttachmentRule::SnapToTarget,
+			EAttachmentRule::KeepWorld,
+			false
+		));
+
+	
 
 	Pickup->SetActorRelativeLocation(FVector::ZeroVector);
 	Pickup->SetActorRelativeRotation(FRotator::ZeroRotator);

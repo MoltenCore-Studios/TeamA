@@ -24,10 +24,6 @@ public:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
     USceneComponent* SocketPoint;
 
-    /** Optional mesh to visualize the socket in-editor */
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-    UStaticMeshComponent* SocketMesh;
-
     /** What item type this socket accepts (optional: any) */
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     EItemTypesEnum AcceptedItemType;

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "ItemTypesEnum.h"
+#include "Components/BoxComponent.h"
 #include "Pickup.generated.h"
 
 UCLASS()
@@ -16,10 +17,11 @@ public:
 	// Sets default values for this actor's properties
 	APickup();
 
-	// Mesh component
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UStaticMeshComponent* CollisionMesh;
+	USceneComponent* Root;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UBoxComponent* InteractionVolume;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
