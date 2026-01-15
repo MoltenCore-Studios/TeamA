@@ -89,27 +89,12 @@ void AWorkstation::Tick(float DeltaTime)
 
 }
 
-void AWorkstation::Enter(ACharacter* Character)
+void AWorkstation::Enter_Implementation(ACharacter* Character)
 {
-	//Inventory.Empty();
-	// Find all child actors of type AItemSlot and add their attached items to inventory
-	/*
-	TArray<AActor*> ChildActors;
-	GetAttachedActors(ChildActors);
-	for (AActor* Child : ChildActors)
-	{
-		AItemSlot* ItemSlot = Cast<AItemSlot>(Child);
-		if (ItemSlot && ItemSlot->bIsOccupied && ItemSlot->AttachedItem)
-		{
-			Inventory.Add(ItemSlot->AttachedItem);
-		}
-	}
-	*/
-	UE_LOG(LogTemp, Log, TEXT("Workstation Entered. Inventory has %d items."), Inventory.Num());
-
+	UE_LOG(LogTemp, Warning, TEXT("Entered Workstation"));
 }
 
-void AWorkstation::Exit(ACharacter* Character)
+void AWorkstation::Exit_Implementation(ACharacter* Character)
 {
 
 }

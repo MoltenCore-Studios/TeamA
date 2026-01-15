@@ -18,16 +18,19 @@ public:
 	AWorkstation();
 
 	// Called when player enters 
-	virtual void Enter(class ACharacter* Character);
+	UFUNCTION(BlueprintNativeEvent, Category = "Workstation")
+	void Enter(class ACharacter* Character);
 
 	// Called when player exits 
-	virtual void Exit(class ACharacter* Character);
+	UFUNCTION(BlueprintNativeEvent, Category = "Workstation")
+	void Exit(class ACharacter* Character);
 
 	virtual void CalcCamera(
 		float DeltaTime,
 		struct FMinimalViewInfo& OutResult) override;
 
 	// Array of pickup actors that are in this workstations inventory
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TArray<class APickup*> Inventory;
 
 	//Arrow Component
