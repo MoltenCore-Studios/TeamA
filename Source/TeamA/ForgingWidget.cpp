@@ -24,26 +24,6 @@ void UForgingWidget::ShowForgePrompt(bool bShow)
 	}
 }
 
-void UForgingWidget::ShowCrosshair(bool bShow)
-{
-	if (Crosshair)
-	{
-		Crosshair->SetVisibility(bShow ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
-	}
-}
-
-void UForgingWidget::SetCrosshairPosition(float x, float y)
-{
-	if (Crosshair)
-	{
-		UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(Crosshair->Slot);
-		if (CanvasSlot)
-		{
-			CanvasSlot->SetPosition(FVector2D(x, y));
-		}
-	}
-}
-
 
 // ===== Hammer Bars =====
 

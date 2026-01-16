@@ -162,5 +162,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<class UUserWidget> ForgingWidgetClass;
 
+	bool GetBladeScreenBounds(float& OutMinX, float& OutMaxX) const;
 
 };
