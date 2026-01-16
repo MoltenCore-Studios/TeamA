@@ -30,6 +30,11 @@ public:
 	float FinalForgeScore;
 	void FinalizeForgingScore();
 
+
+
+	UFUNCTION(BlueprintNativeEvent)
+	void ForgeModel();
+
 protected:
 
 

@@ -375,6 +375,12 @@ void AForgingStation::ProcessHammerInput()
 	EForgeHitQuality FinalQuality =
 		CombineHitQuality(TimingQuality, PositionQuality);
 
+	//
+	//
+	PlayHammerAnimation(CurrentHammerIndex, FinalQuality);
+	//
+	//
+
 	UE_LOG(
 		LogTemp,
 		Warning,
@@ -387,7 +393,7 @@ void AForgingStation::ProcessHammerInput()
 	CurrentProject->forgingProgress += ForgingProgressPerHit;
 	CurrentProject->forgingProgress =
 		FMath::Clamp(CurrentProject->forgingProgress, 0.0f, 1.0f);
-
+	CurrentProject->ForgeModel();
 
 	// Hide current bar
 	
