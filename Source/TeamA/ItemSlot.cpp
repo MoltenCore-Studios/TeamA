@@ -21,10 +21,13 @@ AItemSlot::AItemSlot()
 
     InteractionVolume = CreateDefaultSubobject<UBoxComponent>(TEXT("InteractionVolume"));
     InteractionVolume->SetupAttachment(RootComponent);
-    InteractionVolume->SetCollisionProfileName(TEXT("BlockAll"));
 	InteractionVolume->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
     InteractionVolume->SetGenerateOverlapEvents(true);
     DrawDebugBox(GetWorld(), SocketPoint->GetComponentLocation(), FVector(20.f), FColor::Green, false, 2.f);
+
+	//Set each collision channel to block
+	InteractionVolume->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+
 
 
 }

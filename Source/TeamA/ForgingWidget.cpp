@@ -1,11 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "ForgingWidget.h"
 #include "Components/TextBlock.h"
 #include "Components/ProgressBar.h"
 #include "Components/Image.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Components/CanvasPanel.h"
-#include "ForgingWidget.h"
+
 
 void UForgingWidget::UpdateForgePrompt(const FString& NewText)
 {

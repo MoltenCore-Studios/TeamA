@@ -1,5 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "ForgingStation.h"
 #include "InputActionValue.h"
 #include "EnhancedInputComponent.h"
 #include "GameFramework/PlayerController.h"
@@ -7,7 +8,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "Blueprint/UserWidget.h"
 #include "ForgingWidget.h"
-#include "ForgingStation.h"
+
 
 AForgingStation::AForgingStation()
 {

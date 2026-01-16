@@ -1,5 +1,5 @@
-#include "ItemTypesEnum.h"
 #include "Project.h"
+#include "ItemTypesEnum.h"
 
 AProject::AProject()
 {
