@@ -387,7 +387,7 @@ void AForgingStation::ProcessHammerInput()
 	CurrentProject->forgingProgress += ForgingProgressPerHit;
 	CurrentProject->forgingProgress =
 		FMath::Clamp(CurrentProject->forgingProgress, 0.0f, 1.0f);
-
+	CurrentProject->ForgeModel();
 
 	// Hide current bar
 	
