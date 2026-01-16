@@ -20,6 +20,7 @@ public:
 	USkeletalMeshComponent* SkeletalMesh;
 
 	//Variables for Forging minigame
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bIsForged;
 	TArray<float> ForgingPattern;
 	float forgingProgress;
