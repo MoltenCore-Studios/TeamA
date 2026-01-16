@@ -32,3 +32,8 @@ void AProject::FinalizeForgingScore()
 	// Convert to percentage
 	FinalForgeScore = FMath::Clamp(AverageScore * 100.0f, 0.0f, 100.0f);
 }
+
+void AProject::ForgeModel_Implementation()
+{
+
+}

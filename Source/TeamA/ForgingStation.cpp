@@ -7,6 +7,9 @@
 #include "GameFramework/Character.h"
 #include "EnhancedInputSubsystems.h"
 #include "Blueprint/UserWidget.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
+#include "Kismet/GameplayStatics.h"
+#include "GameFramework/PlayerController.h"
 #include "ForgingWidget.h"
 
 
@@ -53,6 +56,17 @@ void AForgingStation::Enter_Implementation(ACharacter* Character)
 	}
 
 	BindInput(PC);
+
+	PC->bShowMouseCursor = true;
+
+	FInputModeGameAndUI InputMode;
+	InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+	InputMode.SetHideCursorDuringCapture(false);
+	InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::LockInFullscreen);
+
+	PC->SetInputMode(InputMode);
+
+
 
 	// Get current project by checking the first project in the workstation's inventory
 	CurrentProject = nullptr;
@@ -138,6 +152,13 @@ void AForgingStation::Exit_Implementation(ACharacter* Character)
 	}
 
 	UnbindInput();
+
+	PC->bShowMouseCursor = false;
+
+	FInputModeGameOnly InputMode;
+	PC->SetInputMode(InputMode);
+
+
 	isEntered = false;
 
 	// Unload forging UI
@@ -156,18 +177,6 @@ void AForgingStation::Tick(float DeltaTime)
 	if (!isEntered)
 	{
 		return;
-	}
-
-	if (ForgingWidgetInstance)
-	{
-		//Get mouse position and set crosshair position
-		ForgingWidgetInstance->ShowCrosshair(true);
-		float MouseX, MouseY;
-		APlayerController* PC = Cast<APlayerController>(GetWorld()->GetFirstPlayerController());
-		if (PC && PC->GetMousePosition(MouseX, MouseY))
-		{
-			ForgingWidgetInstance->SetCrosshairPosition(MouseX, MouseY);
-		}
 	}
 
 	// Implementation for starting the forging sequence
@@ -192,14 +201,13 @@ void AForgingStation::Tick(float DeltaTime)
 			}
 			else if (CurrentHammerIndex == 1)
 			{
-				ForgingWidgetInstance->UpdateHammerBar_1(CurrentHammerFill);
+				ForgingWidgetInstance->UpdateHammerBar_0(CurrentHammerFill);
 			}
 			else if (CurrentHammerIndex == 2)
 			{
-				ForgingWidgetInstance->UpdateHammerBar_2(CurrentHammerFill);
+				ForgingWidgetInstance->UpdateHammerBar_0(CurrentHammerFill);
 			}
 		}
-
 
 	}
 }
@@ -241,6 +249,18 @@ void AForgingStation::StartForgingSequence()
 	//Create an array of floats equal to the forging pattern length
 	TArray<float> TargetPositions;
 	int PatternLength = CurrentForgingPattern.Num();
+
+	//Get canvas size to set target position
+	FVector2D ViewportSize = ForgingWidgetInstance->GetCanvasSize();
+
+	float MinBladeX, MaxBladeX;
+	if (!GetBladeScreenBounds(MinBladeX, MaxBladeX))
+	{
+		// Fallback to safe defaults
+		MinBladeX = ViewportSize.X * 0.2f;
+		MaxBladeX = ViewportSize.X * 0.8f;
+	}
+
 	
 	// Create target positions based on pattern length, between 0.1 and 0.9, spaced at least 0.1 apart
 	TargetPositions.SetNum(PatternLength);
@@ -252,11 +272,14 @@ void AForgingStation::StartForgingSequence()
 		do
 		{
 			bIsValidPosition = true;
-			Position = FMath::FRandRange(0.1f, 0.9f);
+
+			float ScreenX = FMath::FRandRange(MinBladeX, MaxBladeX);
+			Position = ScreenX / ViewportSize.X;
+
 			// Check against existing positions for minimum spacing
 			for (int j = 0; j < i; j++)
 			{
-				if (FMath::Abs(Position - TargetPositions[j]) < 0.1f)
+				if (FMath::Abs(Position - TargetPositions[j]) < 0.02f)
 				{
 					bIsValidPosition = false;
 					break;
@@ -273,8 +296,7 @@ void AForgingStation::StartForgingSequence()
 	//Sort positions for left-to-right arrangement
 	TargetPositions.Sort();
 
-	//Get canvas size to set target position
-	FVector2D ViewportSize = ForgingWidgetInstance->GetCanvasSize();
+
 
 	float TargetPositionY = ViewportSize.Y * 0.4f; // Center
 	float HammerBarPositionY = ViewportSize.Y * 0.8f; // Near bottom
@@ -284,8 +306,9 @@ void AForgingStation::StartForgingSequence()
 		float TargetPositionX = ViewportSize.X * TargetPositions[0];
 		ForgingWidgetInstance->SetTarget_0Position(TargetPositionX, TargetPositionY);
 		float HammerBarPositionX = TargetPositionX;
-		ForgingWidgetInstance->SetHammerBar_0Position(HammerBarPositionX, HammerBarPositionY);
+		//ForgingWidgetInstance->SetHammerBar_0Position(HammerBarPositionX, HammerBarPositionY);
 		ForgingWidgetInstance->ShowHammerBar_0(true);
+		ForgingWidgetInstance->UpdateHammerBar_0(0.0f);
 		ForgingWidgetInstance->ShowTarget_0(true);
 	}
 	if (PatternLength > 1)
@@ -294,7 +317,8 @@ void AForgingStation::StartForgingSequence()
 		ForgingWidgetInstance->SetTarget_1Position(TargetPositionX, TargetPositionY);
 		float HammerBarPositionX = TargetPositionX;
 		ForgingWidgetInstance->SetHammerBar_1Position(HammerBarPositionX, HammerBarPositionY);
-		ForgingWidgetInstance->ShowHammerBar_1(true);
+		//ForgingWidgetInstance->ShowHammerBar_1(true);
+		ForgingWidgetInstance->UpdateHammerBar_1(0.0f);
 		ForgingWidgetInstance->ShowTarget_1(true);
 	}
 	if (PatternLength > 2)
@@ -303,7 +327,8 @@ void AForgingStation::StartForgingSequence()
 		ForgingWidgetInstance->SetTarget_2Position(TargetPositionX, TargetPositionY);
 		float HammerBarPositionX = TargetPositionX;
 		ForgingWidgetInstance->SetHammerBar_2Position(HammerBarPositionX, HammerBarPositionY);
-		ForgingWidgetInstance->ShowHammerBar_2(true);
+		//ForgingWidgetInstance->ShowHammerBar_2(true);
+		ForgingWidgetInstance->UpdateHammerBar_2(0.0f);
 		ForgingWidgetInstance->ShowTarget_2(true);
 	}
 
@@ -324,13 +349,20 @@ void AForgingStation::ProcessHammerInput()
 	if (!isForging || !CurrentProject || !ForgingWidgetInstance)
 		return;
 
-	// Get cursor position
-	float MouseX, MouseY;
+
 	APlayerController* PC = Cast<APlayerController>(GetWorld()->GetFirstPlayerController());
-	if (!PC || !PC->GetMousePosition(MouseX, MouseY))
+	
+	FVector2D CursorPos;
+	bool bHasCursor =
+		UWidgetLayoutLibrary::GetMousePositionScaledByDPI(
+			PC,
+			CursorPos.X,
+			CursorPos.Y
+		);
+
+	if (!bHasCursor)
 		return;
 
-	FVector2D CursorPos(MouseX, MouseY);
 	FVector2D TargetPos = GetTargetScreenPosition(CurrentHammerIndex);
 
 	// Evaluate scores
@@ -342,6 +374,12 @@ void AForgingStation::ProcessHammerInput()
 
 	EForgeHitQuality FinalQuality =
 		CombineHitQuality(TimingQuality, PositionQuality);
+
+	//
+	//
+	PlayHammerAnimation(CurrentHammerIndex, FinalQuality);
+	//
+	//
 
 	UE_LOG(
 		LogTemp,
@@ -355,20 +393,24 @@ void AForgingStation::ProcessHammerInput()
 	CurrentProject->forgingProgress += ForgingProgressPerHit;
 	CurrentProject->forgingProgress =
 		FMath::Clamp(CurrentProject->forgingProgress, 0.0f, 1.0f);
-
+	CurrentProject->ForgeModel();
 
 	// Hide current bar
+	
 	if (CurrentHammerIndex == 0)
 	{
-		ForgingWidgetInstance->ShowHammerBar_0(false);
+		//ForgingWidgetInstance->ShowHammerBar_0(false);
+		ForgingWidgetInstance->ShowTarget_0(false);
 	}
 	else if (CurrentHammerIndex == 1)
 	{
-		ForgingWidgetInstance->ShowHammerBar_1(false);
+		//ForgingWidgetInstance->ShowHammerBar_1(false);
+		ForgingWidgetInstance->ShowTarget_1(false);
 	}
 	else if (CurrentHammerIndex == 2)
 	{
-		ForgingWidgetInstance->ShowHammerBar_2(false);
+		//ForgingWidgetInstance->ShowHammerBar_2(false);
+		ForgingWidgetInstance->ShowTarget_2(false);
 	}
 
 	UE_LOG(
@@ -381,6 +423,18 @@ void AForgingStation::ProcessHammerInput()
 		(int32)FinalQuality,
 		CurrentProject->forgingProgress * 100.0f
 	);
+
+	UE_LOG(
+		LogTemp,
+		Warning,
+		TEXT("Cursor: %.1f %.1f | Target: %.1f %.1f | Dist: %.1f"),
+		CursorPos.X,
+		CursorPos.Y,
+		TargetPos.X,
+		TargetPos.Y,
+		FVector2D::Distance(CursorPos, TargetPos)
+	);
+
 
 	float HitScore = 0.0f;
 
@@ -420,7 +474,10 @@ void AForgingStation::BeginNextHammer()
 
 	CurrentHammerFill = 0.0f;
 
+	ForgingWidgetInstance->ShowHammerBar_0(true);
+
 	// Show correct bar
+	/*
 	if (CurrentHammerIndex == 0)
 	{
 		ForgingWidgetInstance->ShowHammerBar_0(true);
@@ -432,7 +489,7 @@ void AForgingStation::BeginNextHammer()
 	else if (CurrentHammerIndex == 2)
 	{
 		ForgingWidgetInstance->ShowHammerBar_2(true);
-	}
+	}*/
 }
 
 void AForgingStation::FinishForging()
@@ -453,6 +510,8 @@ void AForgingStation::FinishForging()
 	}
 	else
 	{
+		//Hide hammer bar
+		ForgingWidgetInstance->ShowHammerBar_0(false);
 		ForgingWidgetInstance->UpdateForgePrompt(TEXT("Press Space to continue forging"));
 	}
 
@@ -565,4 +624,47 @@ EForgeHitQuality AForgingStation::CombineHitQuality(
 			static_cast<uint8>(Position)
 		)
 		);
+}
+
+
+bool AForgingStation::GetBladeScreenBounds(float& OutMinX, float& OutMaxX) const
+{
+	if (!CurrentProject)
+		return false;
+
+	USkeletalMeshComponent* BladeMesh = CurrentProject->SkeletalMesh;
+	if (!BladeMesh)
+		return false;
+
+	APlayerController* PC = GetWorld()->GetFirstPlayerController();
+	if (!PC)
+		return false;
+
+	// Get world-space bounds
+	FVector Origin;
+	FVector BoxExtent;
+	BladeMesh->GetOwner()->GetActorBounds(
+		true,
+		Origin,
+		BoxExtent
+	);
+
+	// Define left & right points in world space
+	FVector LeftWorld = Origin - FVector(BoxExtent.X, 0, 0);
+	FVector RightWorld = Origin + FVector(BoxExtent.X, 0, 0);
+
+	// Project to screen
+	FVector2D LeftScreen;
+	FVector2D RightScreen;
+
+	bool bLeftValid = PC->ProjectWorldLocationToScreen(LeftWorld, LeftScreen);
+	bool bRightValid = PC->ProjectWorldLocationToScreen(RightWorld, RightScreen);
+
+	if (!bLeftValid || !bRightValid)
+		return false;
+
+	OutMinX = FMath::Min(LeftScreen.X, RightScreen.X);
+	OutMaxX = FMath::Max(LeftScreen.X, RightScreen.X);
+
+	return true;
 }

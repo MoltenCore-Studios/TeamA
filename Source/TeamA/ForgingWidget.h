@@ -26,12 +26,6 @@ public:
 	void UpdateForgePrompt(const FString& NewText);
 	void ShowForgePrompt(bool bShow);
 
-	UPROPERTY(meta = (BindWidget))
-	class UWidget* Crosshair;
-
-	void ShowCrosshair(bool bShow);
-	void SetCrosshairPosition(float x, float y);
-
 	// ===== Hammer Bars =====
 	UPROPERTY(meta = (BindWidget))
 	class UProgressBar* HammerBar_0;

@@ -135,6 +135,13 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Forging")
 	float AcceptableWindow = 0.15f;
 
+	//
+	//
+	UFUNCTION(BlueprintImplementableEvent, Category = "Forging|Visuals")
+	void PlayHammerAnimation(int32 HammerIndex, EForgeHitQuality Quality);
+	//
+	//
+
 
 	UPROPERTY()
 	UEnhancedInputComponent* CachedEnhancedInput = nullptr;
@@ -162,5 +169,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<class UUserWidget> ForgingWidgetClass;
 
+	bool GetBladeScreenBounds(float& OutMinX, float& OutMaxX) const;
 
 };
