@@ -23,6 +23,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bIsForged;
 	TArray<float> ForgingPattern;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float forgingProgress;
 	float TotalForgeScore;
 	int32 TotalForgeHits;
