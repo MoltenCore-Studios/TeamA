@@ -10,6 +10,8 @@
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerController.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraSystem.h"
 #include "DrawDebugHelpers.h"
 #include "Project.h"
 #include "Components/WidgetComponent.h"
@@ -362,6 +364,8 @@ void AForgingStation::ProcessHammerInput()
 	EForgeHitQuality FinalQuality =
 		CombineHitQuality(TimingQuality, PositionQuality);
 
+
+	//PlayHammerAnimation(HitWorldPos, FinalQuality);
 	PlayHammerAnimation(CurrentHammerIndex, FinalQuality);
 
 
@@ -378,6 +382,35 @@ void AForgingStation::ProcessHammerInput()
 	CurrentProject->forgingProgress =
 		FMath::Clamp(CurrentProject->forgingProgress, 0.0f, 1.0f);
 	CurrentProject->ForgeModel();
+
+	float EffectScale = 0.01f;
+
+	switch (FinalQuality)
+	{
+	case EForgeHitQuality::Perfect:
+		EffectScale = EffectScale * 1.3f;
+		break;
+
+	case EForgeHitQuality::Good:
+		EffectScale *= 1.0f;
+		break;
+
+	case EForgeHitQuality::Bad:
+		EffectScale *= 0.7f;
+		break;
+	}
+
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+		GetWorld(),
+		HitEffect,
+		CurrentTarget->TargetWidget->GetComponentLocation(),
+		FRotator::ZeroRotator,
+		FVector(EffectScale),
+		true,
+		true
+	);
+
+
 
 	// Hide current target
 	CurrentTarget->Destroy();

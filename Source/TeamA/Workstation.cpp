@@ -59,6 +59,7 @@ void AWorkstation::Tick(float DeltaTime)
 	FVector BoxLocation = InteractionVolume->GetComponentLocation();
 	FRotator BoxRotation = InteractionVolume->GetComponentRotation();
 	FVector BoxExtent = InteractionVolume->GetScaledBoxExtent();
+	/*
 	DrawDebugBox(
 		GetWorld(),
 		BoxLocation,
@@ -69,7 +70,7 @@ void AWorkstation::Tick(float DeltaTime)
 		-1.f,
 		0,
 		2.f
-	);
+	);*/
 
 
 }

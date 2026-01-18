@@ -9,6 +9,7 @@
 #include "InputMappingContext.h"
 #include "ForgingWidget.h"
 #include "ForgingTargetActor.h"
+#include "NiagaraSystem.h"
 #include "ForgingStation.generated.h"
 
 /**
@@ -79,6 +80,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Forging|Scoring")
 	float BadHitScore = 0.2f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "VFX")
+	UNiagaraSystem* HitEffect;
 
 
 	UPROPERTY(EditDefaultsOnly)
