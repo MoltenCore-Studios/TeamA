@@ -8,6 +8,7 @@
 #include "InputAction.h"
 #include "InputMappingContext.h"
 #include "ForgingWidget.h"
+#include "ForgingTargetActor.h"
 #include "ForgingStation.generated.h"
 
 /**
@@ -79,7 +80,14 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Forging|Scoring")
 	float BadHitScore = 0.2f;
 
-	
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AForgingTargetActor> TargetActorClass;
+	TArray<AForgingTargetActor*> ActiveTargets;
+
+	bool GetMouseWorldPosition(FVector& OutWorldPos) const;
+
+	EForgeHitQuality CombineHitQuality(EForgeHitQuality Timing, EForgeHitQuality Position);
 
 protected:
 	virtual void BeginPlay() override;
@@ -120,9 +128,11 @@ protected:
 	void BeginNextHammer();
 	void FinishForging();
 	EForgeHitQuality EvaluateTiming(float FillValue, float TargetValue) const;
-	FVector2D GetTargetScreenPosition(int32 Index) const;
-	EForgeHitQuality EvaluatePosition(const FVector2D& CursorPos,const FVector2D& TargetPos) const;
-	EForgeHitQuality CombineHitQuality(EForgeHitQuality Timing, EForgeHitQuality Position);
+	EForgeHitQuality EvaluateScreenPosition(
+		const FVector& HitWorldPos,
+		AForgingTargetActor* Target
+	) const;
+
 
 
 	// Tuning
@@ -168,7 +178,4 @@ public:
 	// UI Widget for forging
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<class UUserWidget> ForgingWidgetClass;
-
-	bool GetBladeScreenBounds(float& OutMinX, float& OutMaxX) const;
-
 };

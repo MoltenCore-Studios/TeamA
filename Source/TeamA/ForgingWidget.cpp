@@ -35,21 +35,7 @@ void UForgingWidget::UpdateHammerBar_0(float Progress)
 	}
 }
 
-void UForgingWidget::UpdateHammerBar_1(float Progress)
-{
-	if (HammerBar_1)
-	{
-		HammerBar_1->SetPercent(Progress);
-	}
-}
 
-void UForgingWidget::UpdateHammerBar_2(float Progress)
-{
-	if (HammerBar_2)
-	{
-		HammerBar_2->SetPercent(Progress);
-	}
-}
 
 void UForgingWidget::ShowHammerBar_0(bool bShow)
 {
@@ -59,21 +45,6 @@ void UForgingWidget::ShowHammerBar_0(bool bShow)
 	}
 }
 
-void UForgingWidget::ShowHammerBar_1(bool bShow)
-{
-	if (HammerBar_1)
-	{
-		HammerBar_1->SetVisibility(bShow ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
-	}
-}
-
-void UForgingWidget::ShowHammerBar_2(bool bShow)
-{
-	if (HammerBar_2)
-	{
-		HammerBar_2->SetVisibility(bShow ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
-	}
-}
 
 void UForgingWidget::SetHammerBar_0Color(const FLinearColor& NewColor)
 {
@@ -83,21 +54,6 @@ void UForgingWidget::SetHammerBar_0Color(const FLinearColor& NewColor)
 	}
 }
 
-void UForgingWidget::SetHammerBar_1Color(const FLinearColor& NewColor)
-{
-	if (HammerBar_1)
-	{
-
-	}
-}
-
-void UForgingWidget::SetHammerBar_2Color(const FLinearColor& NewColor)
-{
-	if (HammerBar_2)
-	{
-
-	}
-}
 
 void UForgingWidget::SetHammerBar_0Target(float NewTarget)
 {
@@ -105,17 +61,6 @@ void UForgingWidget::SetHammerBar_0Target(float NewTarget)
 	// This is a placeholder for setting a target marker on the progress bar.
 }
 
-void UForgingWidget::SetHammerBar_1Target(float NewTarget)
-{
-	// Implementation depends on how the target is represented in the UI.
-	// This is a placeholder for setting a target marker on the progress bar.
-}
-
-void UForgingWidget::SetHammerBar_2Target(float NewTarget)
-{
-	// Implementation depends on how the target is represented in the UI.
-	// This is a placeholder for setting a target marker on the progress bar.
-}
 
 
 
@@ -131,131 +76,6 @@ void UForgingWidget::SetHammerBar_0Position(float x, float y)
 	}
 }
 
-void UForgingWidget::SetHammerBar_1Position(float x, float y)
-{
-	if (HammerBar_1)
-	{
-		UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(HammerBar_1->Slot);
-		if (CanvasSlot)
-		{
-			CanvasSlot->SetPosition(FVector2D(x, y));
-		}
-	}
-}
-
-void UForgingWidget::SetHammerBar_2Position(float x, float y)
-{
-	if (HammerBar_2)
-	{
-		UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(HammerBar_2->Slot);
-		if (CanvasSlot)
-		{
-			CanvasSlot->SetPosition(FVector2D(x, y));
-		}
-	}
-}
-
-
-// ===== Targets =====
-
-void UForgingWidget::ShowTarget_0(bool bShow)
-{
-	if (Target_0)
-	{
-		Target_0->SetVisibility(bShow ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
-	}
-}
-
-void UForgingWidget::ShowTarget_1(bool bShow)
-{
-	if (Target_1)
-	{
-		Target_1->SetVisibility(bShow ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
-	}
-}
-
-void UForgingWidget::ShowTarget_2(bool bShow)
-{
-	if (Target_2)
-	{
-		Target_2->SetVisibility(bShow ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
-	}
-}
-
-void UForgingWidget::SetTarget_0Position(float x, float y)
-{
-	if (Target_0)
-	{
-		UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(Target_0->Slot);
-		if (CanvasSlot)
-		{
-			CanvasSlot->SetPosition(FVector2D(x, y));
-		}
-	}
-}
-
-void UForgingWidget::SetTarget_1Position(float x, float y)
-{
-	if (Target_1)
-	{
-		UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(Target_1->Slot);
-		if (CanvasSlot)
-		{
-			CanvasSlot->SetPosition(FVector2D(x, y));
-		}
-	}
-}
-
-void UForgingWidget::SetTarget_2Position(float x, float y)
-{
-	if (Target_2)
-	{
-		UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(Target_2->Slot);
-		if (CanvasSlot)
-		{
-			CanvasSlot->SetPosition(FVector2D(x, y));
-		}
-	}
-}
-
-FVector2D UForgingWidget::GetTarget_0Position() const
-{
-	if (Target_0)
-	{
-		UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(Target_0->Slot);
-		if (CanvasSlot)
-		{
-			return CanvasSlot->GetPosition();
-		}
-	}
-	return FVector2D::ZeroVector;
-}
-
-FVector2D UForgingWidget::GetTarget_1Position() const
-{
-	if (Target_1)
-	{
-		UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(Target_1->Slot);
-		if (CanvasSlot)
-		{
-			return CanvasSlot->GetPosition();
-		}
-	}
-	return FVector2D::ZeroVector;
-}
-
-FVector2D UForgingWidget::GetTarget_2Position() const
-{
-	if (Target_2)
-	{
-		UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(Target_2->Slot);
-		if (CanvasSlot)
-		{
-			return CanvasSlot->GetPosition();
-		}
-	}
-	return FVector2D::ZeroVector;
-}
 
 
 
