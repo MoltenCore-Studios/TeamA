@@ -273,6 +273,7 @@ void AForgingStation::StartForgingSequence()
 		return;
 
 	// Clear old targets
+	/*
 	if (ActiveTargets.Num() > 0)
 	{
 		for (AForgingTargetActor* Target : ActiveTargets)
@@ -280,7 +281,7 @@ void AForgingStation::StartForgingSequence()
 			if (Target)
 				Target->Destroy();
 		}
-	}
+	}*/
 		
 	ActiveTargets.Empty();
 
