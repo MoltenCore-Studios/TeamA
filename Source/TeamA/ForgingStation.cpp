@@ -17,7 +17,10 @@
 #include "NiagaraSystem.h"
 #include "ForgingTargetActor.h"
 #include "Components/WidgetComponent.h"
+#include <iostream>
+#include <algorithm>
 #include "ForgingWidget.h"
+using namespace std;
 
 
 AForgingStation::AForgingStation()
@@ -166,6 +169,13 @@ void AForgingStation::Exit_Implementation(ACharacter* Character)
 	{
 		ForgingWidgetInstance->RemoveFromParent();
 		ForgingWidgetInstance = nullptr;
+
+		// Clear targets
+		for (AForgingTargetActor* Target : ActiveTargets)
+		{
+			if (Target)
+				Target->Destroy();
+		}
 	}
 }
 
@@ -199,20 +209,21 @@ void AForgingStation::Tick(float DeltaTime)
 		{
 			float FillSpeed = 1.0f / HammerFillDuration;
 			CurrentHammerFill += DeltaTime * FillSpeed;
-			CurrentHammerFill = FMath::Clamp(CurrentHammerFill, 0.0f, 1.0f);
+			CurrentHammerFill = FMath::Clamp(CurrentHammerFill, -HammerFillDelay, 1.0f);
 			CurrentTargetValue = CurrentForgingPattern.IsValidIndex(CurrentHammerIndex)
 				? CurrentForgingPattern[CurrentHammerIndex]
 				: 0.5f;
 
 			// Update UI
-			ForgingWidgetInstance->UpdateHammerBar_0(CurrentHammerFill);
+			ForgingWidgetInstance->UpdateHammerBar_0( max(CurrentHammerFill, 0.0f));
 			ForgingWidgetInstance->SetForgeTargetPercent(CurrentTargetValue);
 			
 			AForgingTargetActor* CurrentTarget = ActiveTargets.IsValidIndex(CurrentHammerIndex)
 				? ActiveTargets[CurrentHammerIndex]
 				: nullptr;
 			if (CurrentTarget) {
-				
+				//Color change logic here
+				CurrentTarget->SetTargetWidgetColor(FLinearColor::Green);
 			}
 
 		}
@@ -262,11 +273,15 @@ void AForgingStation::StartForgingSequence()
 		return;
 
 	// Clear old targets
-	for (AForgingTargetActor* Target : ActiveTargets)
+	if (ActiveTargets.Num() > 0)
 	{
-		if (Target)
-			Target->Destroy();
+		for (AForgingTargetActor* Target : ActiveTargets)
+		{
+			if (Target)
+				Target->Destroy();
+		}
 	}
+		
 	ActiveTargets.Empty();
 
 	// Get local bounds of blade
@@ -289,7 +304,18 @@ void AForgingStation::StartForgingSequence()
 		RandomZPositions.Add(RandomZ);
 	}
 	// Sort the array from largest to smallest
-	RandomZPositions.Sort([](float A, float B) {return A > B;});	
+	RandomZPositions.Sort([](float A, float B) {return A > B;});
+	//Ensure that the positions are not too close to each other
+	const float MinSeparation = (MaxZ - MinZ) / (PatternLength * 2);
+	for (int32 i = 1; i < RandomZPositions.Num(); i++)
+	{
+		if (FMath::Abs(RandomZPositions[i] - RandomZPositions[i - 1]) < MinSeparation)
+		{
+			RandomZPositions[i] = RandomZPositions[i - 1] - MinSeparation;
+			// Clamp to MinZ
+			RandomZPositions[i] = FMath::Max(RandomZPositions[i], MinZ);
+		}
+	}
 
 
 
@@ -332,7 +358,7 @@ void AForgingStation::StartForgingSequence()
 
 	isForging = true;
 	CurrentHammerIndex = 0;
-	CurrentHammerFill = 0.0f;
+	CurrentHammerFill = -HammerFillDelay;
 	TotalHammerHits = CurrentForgingPattern.Num();
 
 	// For now, fixed target
@@ -488,7 +514,7 @@ void AForgingStation::BeginNextHammer()
 		return;
 	}
 
-	CurrentHammerFill = 0.0f;
+	CurrentHammerFill = -HammerFillDelay;
 
 	ForgingWidgetInstance->ShowHammerBar_0(true);
 }

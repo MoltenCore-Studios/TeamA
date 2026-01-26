@@ -109,9 +109,11 @@ protected:
 	// Current bar fill (0–1)
 	float CurrentHammerFill = 0.0f;
 
-	// How fast bars fill (seconds to full)
 	UPROPERTY(EditAnywhere, Category = "Forging")
 	float HammerFillDuration = 1.5f;
+
+	UPROPERTY(EditAnywhere, Category = "Forging")
+	float HammerFillDelay = 0.5f;
 
 	// Cached pattern length
 	int32 TotalHammerHits = 0;
@@ -131,11 +133,6 @@ protected:
 		AForgingTargetActor* Target
 	) const;
 
-
-
-	// Tuning
-	UPROPERTY(EditAnywhere, Category = "Forging")
-	float BaseChargeSpeed = 0.4f;
 
 	UPROPERTY(EditAnywhere, Category = "Forging")
 	float PerfectWindow = 0.08f;

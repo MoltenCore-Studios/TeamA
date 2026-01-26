@@ -17,6 +17,8 @@ AForgingTargetActor::AForgingTargetActor()
 	TargetWidget->SetWidgetSpace(EWidgetSpace::World);
 	TargetWidget->SetDrawSize(FVector2D(32, 32));
 	TargetWidget->SetPivot(FVector2D(0.5f, 0.5f));
+
+
 }
 
 // Called when the game starts or when spawned
@@ -33,3 +35,10 @@ void AForgingTargetActor::Tick(float DeltaTime)
 
 }
 
+void AForgingTargetActor::SetTargetWidgetColor(const FLinearColor& NewColor)
+{
+	if (TargetWidget)
+	{
+		TargetWidget->SetTintColorAndOpacity(NewColor);
+	}
+}
