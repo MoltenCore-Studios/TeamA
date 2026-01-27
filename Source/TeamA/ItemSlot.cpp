@@ -93,6 +93,15 @@ void AItemSlot::DetachItem()
     bIsOccupied = false;
 }
 
+void AItemSlot::DeleteItem()
+{
+    if (!AttachedItem)
+        return;
+    AttachedItem->Destroy();
+    AttachedItem = nullptr;
+    bIsOccupied = false;
+}
+
 APickup* AItemSlot::TakeItem()
 {
     if (!AttachedItem)

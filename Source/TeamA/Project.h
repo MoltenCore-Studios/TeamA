@@ -28,7 +28,10 @@ public:
 	float forgingProgress;
 	float TotalForgeScore;
 	int32 TotalForgeHits;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float FinalForgeScore;
+
 	void FinalizeForgingScore();
 
 

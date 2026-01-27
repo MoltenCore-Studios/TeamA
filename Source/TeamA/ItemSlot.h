@@ -48,6 +48,10 @@ public:
     UFUNCTION(BlueprintCallable)
     void DetachItem();
 
+	/** Delete the currently attached item */
+    UFUNCTION(BlueprintCallable)
+	void DeleteItem();
+
     UFUNCTION(BlueprintCallable)
     APickup* TakeItem();
 

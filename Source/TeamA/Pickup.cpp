@@ -38,7 +38,7 @@ void APickup::Tick(float DeltaTime)
 
 }
 
-void APickup::OnPickedUp()
+void APickup::OnPickedUp_Implementation()
 {
 	// You can add custom logic here for when the item is picked up
 	// For example, play a sound or spawn a particle effect
