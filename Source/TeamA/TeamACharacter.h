@@ -122,7 +122,10 @@ protected:
 	APickup* GetPickupInView();
 
 	UFUNCTION(BlueprintCallable, Category = "Input")
-	virtual void PickupItem();
+	virtual void ItemInteract();
+
+	void DropItem();
+	void PickupItem();
 
 
 

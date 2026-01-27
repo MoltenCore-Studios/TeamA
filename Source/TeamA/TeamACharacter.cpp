@@ -73,7 +73,7 @@ void ATeamACharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 		EnhancedInputComponent->BindAction(ExitWorkstationAction, ETriggerEvent::Triggered, this, &ATeamACharacter::ExitWorkstation);
 
 		// Pickup
-		EnhancedInputComponent->BindAction(PickupAction, ETriggerEvent::Started, this, &ATeamACharacter::PickupItem);
+		EnhancedInputComponent->BindAction(PickupAction, ETriggerEvent::Started, this, &ATeamACharacter::ItemInteract);
 
 	}
 	else
@@ -197,9 +197,97 @@ void ATeamACharacter::ExitWorkstation()
 }
 
 
+
+
+void ATeamACharacter::ItemInteract()
+{
+	if (CurrentWorkstation) { return; }
+
+	if (HeldItem)
+	{
+		DropItem();
+		return;
+	}
+	else 
+	{
+		PickupItem();
+		return;
+	}
+}
+
+void ATeamACharacter::DropItem()
+{
+	// Line trace or overlap to detect socket
+	FVector Start = FirstPersonCameraComponent->GetComponentLocation();
+	FVector End = Start + (FirstPersonCameraComponent->GetForwardVector() * PickupRange);
+
+	FHitResult Hit;
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+	Params.AddIgnoredActor(HeldItem);
+
+	bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_GameTraceChannel5, Params);
+	// Log hit result
+	UE_LOG(LogTeamA, Log, TEXT("Line Trace Hit: %s"), bHit ? TEXT("True") : TEXT("False"));
+
+
+	if (bHit)
+	{
+		UE_LOG(LogTeamA, Log, TEXT("Hit Actor: %s"), *Hit.GetActor()->GetName());
+		AItemSlot* Slot = Cast<AItemSlot>(Hit.GetActor());
+		UE_LOG(LogTeamA, Log, TEXT("Casting to AItemSlot: %s"), Slot ? TEXT("Success") : TEXT("Failed"));
+		if (Slot && Slot->AttachItem(HeldItem))
+		{
+			// Successfully attached to socket
+			UE_LOG(LogTeamA, Log, TEXT("Item attached to socket: %s"), *Slot->GetName());
+			HeldItem = nullptr;
+			return;
+		}
+	}
+
+	// If no socket hit, drop normally
+	HeldItem->GetRootComponent()->DetachFromComponent(
+		FDetachmentTransformRules::KeepWorldTransform
+	);
+
+
+	HeldItem->InteractionVolume->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	HeldItem->InteractionVolume->SetSimulatePhysics(true);
+	HeldItem->InteractionVolume->SetEnableGravity(true);
+
+	HeldItem = nullptr;
+}
+
+void ATeamACharacter::PickupItem()
+{
+	APickup* Pickup = GetPickupInView();
+	if (!Pickup) { return; }
+
+	HeldItem = Pickup;
+
+	// Disable physics
+	Pickup->InteractionVolume->SetSimulatePhysics(false);
+	Pickup->InteractionVolume->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	Pickup->InteractionVolume->SetEnableGravity(false);
+
+	// Attach to hold point
+	Pickup->AttachToComponent(
+		HoldPoint,
+		FAttachmentTransformRules::FAttachmentTransformRules(
+			EAttachmentRule::SnapToTarget,
+			EAttachmentRule::SnapToTarget,
+			EAttachmentRule::KeepWorld,
+			false
+		));
+
+	Pickup->SetActorRelativeLocation(FVector::ZeroVector);
+	Pickup->SetActorRelativeRotation(FRotator::ZeroRotator);
+	Pickup->OnPickedUp();
+}
+
 APickup* ATeamACharacter::GetPickupInView()
 {
-	
+
 	FVector Start = FirstPersonCameraComponent->GetComponentLocation();
 	FVector End = Start + (FirstPersonCameraComponent->GetForwardVector() * 300.0f);
 
@@ -240,93 +328,10 @@ APickup* ATeamACharacter::GetPickupInView()
 		Params
 	);
 
-
-
 	if (bHit)
 	{
 		return Cast<APickup>(Hit.GetActor());
 	}
 
-
-		
 	return nullptr;
 }
-
-void ATeamACharacter::PickupItem()
-{
-	if (CurrentWorkstation) { return; }
-
-	if (HeldItem)
-	{
-
-		// Line trace or overlap to detect socket
-		FVector Start = FirstPersonCameraComponent->GetComponentLocation();
-		FVector End = Start + (FirstPersonCameraComponent->GetForwardVector() * PickupRange);
-
-		FHitResult Hit;
-		FCollisionQueryParams Params;
-		Params.AddIgnoredActor(this);
-		Params.AddIgnoredActor(HeldItem);
-
-		bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_GameTraceChannel5, Params);
-		// Log hit result
-		UE_LOG(LogTeamA, Log, TEXT("Line Trace Hit: %s"), bHit ? TEXT("True") : TEXT("False"));
-
-
-		if (bHit)
-		{
-			UE_LOG(LogTeamA, Log, TEXT("Hit Actor: %s"), *Hit.GetActor()->GetName());
-			AItemSlot* Slot = Cast<AItemSlot>(Hit.GetActor());
-			UE_LOG(LogTeamA, Log, TEXT("Casting to AItemSlot: %s"), Slot ? TEXT("Success") : TEXT("Failed"));
-			if (Slot && Slot->AttachItem(HeldItem))
-			{
-				// Successfully attached to socket
-				UE_LOG(LogTeamA, Log, TEXT("Item attached to socket: %s"), *Slot->GetName());
-				HeldItem = nullptr;
-				return;
-			}
-		}
-
-		// If no socket hit, drop normally
-		HeldItem->GetRootComponent()->DetachFromComponent(
-			FDetachmentTransformRules::KeepWorldTransform
-		);
-
-
-		HeldItem->InteractionVolume->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		HeldItem->InteractionVolume->SetSimulatePhysics(true);
-		HeldItem->InteractionVolume->SetEnableGravity(true);
-
-		HeldItem = nullptr;
-		return;
-	}
-
-
-	APickup* Pickup = GetPickupInView();
-	if (!Pickup) { return; }
-
-	HeldItem = Pickup;
-
-	// Disable physics
-	Pickup->InteractionVolume->SetSimulatePhysics(false);
-	Pickup->InteractionVolume->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	Pickup->InteractionVolume->SetEnableGravity(false);
-
-	// Attach to hold point
-	Pickup->AttachToComponent(
-		HoldPoint,
-		FAttachmentTransformRules::FAttachmentTransformRules(
-			EAttachmentRule::SnapToTarget,
-			EAttachmentRule::SnapToTarget,
-			EAttachmentRule::KeepWorld,
-			false
-		));
-
-	
-
-	Pickup->SetActorRelativeLocation(FVector::ZeroVector);
-	Pickup->SetActorRelativeRotation(FRotator::ZeroRotator);
-
-	Pickup->OnPickedUp();
-}
-
