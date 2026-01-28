@@ -72,13 +72,11 @@ void AWorkstation::Tick(float DeltaTime)
 		2.f
 	);*/
 
-	//Log the size of the inventory
-	UE_LOG(LogTemp, Warning, TEXT("Workstation Inventory Size: %d"), Inventory.Num());
 }
 
 void AWorkstation::Enter_Implementation(ACharacter* Character)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Entered Workstation"));
+
 }
 
 void AWorkstation::Exit_Implementation(ACharacter* Character)

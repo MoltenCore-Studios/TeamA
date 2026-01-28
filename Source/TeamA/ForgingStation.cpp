@@ -33,7 +33,7 @@ AForgingStation::AForgingStation()
 void AForgingStation::BeginPlay()
 {
 	Super::BeginPlay();
-	PrimaryActorTick.bCanEverTick = true;
+
 }
 
 // Enter and Exit
@@ -98,6 +98,7 @@ void AForgingStation::Enter_Implementation(ACharacter* Character)
 
 	isEntered = true;
 	isForging = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	CurrentTargetValue = 0.0f;
 
@@ -165,6 +166,7 @@ void AForgingStation::Exit_Implementation(ACharacter* Character)
 
 
 	isEntered = false;
+	PrimaryActorTick.bCanEverTick = false;
 
 	// Unload forging UI
 	if (ForgingWidgetInstance)
@@ -274,16 +276,6 @@ void AForgingStation::StartForgingSequence()
 	if (!BladeMesh || !TargetActorClass)
 		return;
 
-	// Clear old targets
-	/*
-	if (ActiveTargets.Num() > 0)
-	{
-		for (AForgingTargetActor* Target : ActiveTargets)
-		{
-			if (Target)
-				Target->Destroy();
-		}
-	}*/
 		
 	ActiveTargets.Empty();
 
