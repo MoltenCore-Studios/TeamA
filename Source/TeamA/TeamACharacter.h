@@ -82,6 +82,7 @@ public:
 	void ExitWorkstation();
 
 	void UpdateInteractPrompt();
+	void UpdateItemSlotHighlight();
 
 	UFUNCTION()
 	void OnOverlapBegin(

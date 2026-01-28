@@ -29,6 +29,20 @@ AItemSlot::AItemSlot()
 	InteractionVolume->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel5, ECollisionResponse::ECR_Block);
 
 
+	// Setup highlight mesh and set it to be hidden by default
+	HighlightMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HighlightMesh"));
+    if (HighlightMesh)
+    {
+		//Set position of highlight mesh to be slightly above the socket point
+		HighlightMesh->SetWorldLocation(SocketPoint->GetComponentLocation() + FVector(0.f, 0.f, 10.f));
+        HighlightMesh->SetupAttachment(RootComponent);
+		HighlightMesh->SetVisibility(false);
+		//Disable collision for highlight mesh
+		HighlightMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		//Scale independently of parent scale
+		HighlightMesh->SetAbsolute(false, false, true);
+        
+	}
 
 }
 
@@ -159,4 +173,12 @@ APickup* AItemSlot::TakeItem()
 	}
 
     return Item;
+}
+
+void AItemSlot::ShowHighlight(bool bShow)
+{
+    if (HighlightMesh)
+    {
+        HighlightMesh->SetVisibility(bShow);
+    }
 }

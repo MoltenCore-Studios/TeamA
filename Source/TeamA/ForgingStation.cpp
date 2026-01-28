@@ -174,12 +174,17 @@ void AForgingStation::Exit_Implementation(ACharacter* Character)
 		ForgingWidgetInstance->RemoveFromParent();
 		ForgingWidgetInstance = nullptr;
 
-		// Clear targets
-		for (AForgingTargetActor* Target : ActiveTargets)
+		/*
+		if (ActiveTargets.Num() > 0)
 		{
-			if (Target)
-				Target->Destroy();
-		}
+			// Clear targets
+			for (AForgingTargetActor* Target : ActiveTargets)
+			{
+				if (Target)
+					Target->Destroy();
+			}
+		}*/
+
 	}
 }
 

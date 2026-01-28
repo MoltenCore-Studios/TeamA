@@ -8,6 +8,7 @@
 #include "EnhancedInputComponent.h"
 #include "InputActionValue.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "ItemSlot.h"
 #include "TeamA.h"
 
@@ -85,7 +86,55 @@ void ATeamACharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	UpdateInteractPrompt();
+
+	UpdateItemSlotHighlight();
 	
+}
+
+void ATeamACharacter::UpdateItemSlotHighlight()
+{
+
+	TArray<AActor*> FoundSlots;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AItemSlot::StaticClass(), FoundSlots);
+	if (HeldItem)
+	{
+		// Iterate through slots and highlight valid ones
+		for (AActor* Actor : FoundSlots)
+		{
+			AItemSlot* Slot = Cast<AItemSlot>(Actor);
+			if (Slot)
+			{
+				if (Slot->AcceptedItemType == HeldItem->ItemType && !Slot->bIsOccupied)
+				{
+					// Highlight valid slot
+					if (Slot->HighlightMesh)
+					{
+						Slot->ShowHighlight(true);
+					}
+				}
+				else
+				{
+					// Remove highlight from invalid slot
+					if (Slot->HighlightMesh)
+					{
+						Slot->ShowHighlight(false);
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		// No held item, remove all highlights
+		for (AActor* Actor : FoundSlots)
+		{
+			AItemSlot* Slot = Cast<AItemSlot>(Actor);
+			if (Slot && Slot->HighlightMesh)
+			{
+				Slot->ShowHighlight(false);
+			}
+		}
+	}
 }
 
 void ATeamACharacter::UpdateInteractPrompt()

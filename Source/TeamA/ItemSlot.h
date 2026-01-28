@@ -39,6 +39,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     UBoxComponent* InteractionVolume;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UStaticMeshComponent* HighlightMesh;
+
 
     /** Try to attach an item to this socket */
     UFUNCTION(BlueprintCallable)
@@ -54,5 +57,8 @@ public:
 
     UFUNCTION(BlueprintCallable)
     virtual APickup* TakeItem();
+
+    UFUNCTION(BlueprintCallable)
+	void ShowHighlight(bool bShow);
 
 };
