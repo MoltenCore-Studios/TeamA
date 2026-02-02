@@ -276,8 +276,17 @@ void ATeamACharacter::OnOverlapBegin(
 	int32 OtherBodyIndex,
 	bool bFromSweep,
 	const FHitResult& SweepResult)
-{
-	OverlappingWorkstation = Cast<AWorkstation>(OtherActor);
+{	//Check if other actor is a workstation
+	AWorkstation* workstation = nullptr;
+	//attempt to cast
+	workstation = Cast<AWorkstation>(OtherActor);
+	if (!workstation)
+	{
+		return;
+	}
+
+
+	OverlappingWorkstation = workstation;
 	if (OverlappingWorkstation)
 	{
 		// You can add additional logic here if needed when overlapping begins
