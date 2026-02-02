@@ -433,7 +433,7 @@ void AForgingStation::ProcessHammerInput()
 		FMath::Clamp(CurrentProject->forgingProgress, 0.0f, 1.0f);
 	CurrentProject->ForgeModel();
 
-	float EffectScale = 0.01f;
+	float EffectScale = 1.0f;
 
 	switch (FinalQuality)
 	{
