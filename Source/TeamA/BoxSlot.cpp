@@ -21,6 +21,18 @@ bool ABoxSlot::AttachItem(APickup* Item)
 		UE_LOG(LogTemp, Warning, TEXT("AttachItem failed: Invalid item."));
 		return false;
 	}
+	if (Item->ItemType != AcceptedItemType)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AttachItem failed: Item type mismatch."));
+		return false;
+	}
+
+	if (ContainedItems.Num() >= ItemMax)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AttachItem failed: BoxSlot is full."));
+		return false;
+	}
+
 
 	// Attach item to socket
 	Item->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
