@@ -25,7 +25,7 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	TArray<APickup*> ContainedItems;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int ItemMax;
 
 	virtual bool AttachItem(APickup* Item) override;
