@@ -3,16 +3,18 @@
 
 #include "EnchantingStation.h"
 #include "InputActionValue.h"
+#include "InputActionValue.h"
 #include "EnhancedInputComponent.h"
 #include "GameFramework/PlayerController.h"
+#include "Components/BoxComponent.h"
+#include "Components/StaticMeshComponent.h"
+#include "Components/SceneComponent.h"
 #include "GameFramework/Character.h"
 #include "EnhancedInputSubsystems.h"
 
 
 void AEnchantingStation::Enter_Implementation(ACharacter* Character)
 {
-	Stroke.Empty();
-
 	APlayerController* PC = Character
 		? Cast<APlayerController>(Character->GetController())
 		: nullptr;
@@ -21,12 +23,6 @@ void AEnchantingStation::Enter_Implementation(ACharacter* Character)
 	{
 		return;
 	}
-
-	ULocalPlayer* LP = PC->GetLocalPlayer();
-	if (!LP) return;
-
-	UEnhancedInputLocalPlayerSubsystem* Subsystem =
-		ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LP);
 
 	BindInput(PC);
 
@@ -38,7 +34,31 @@ void AEnchantingStation::Enter_Implementation(ACharacter* Character)
 	InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::LockInFullscreen);
 
 	PC->SetInputMode(InputMode);
+	//EnableTick
+	PrimaryActorTick.bCanEverTick = true;
+
+	CachedPC = PC;
 }
+
+
+void AEnchantingStation::Tick(float DeltaTime)
+{
+
+}
+
+void AEnchantingStation::StartDrawing()
+{
+	// Start drawing logic here
+	UE_LOG(LogTemp, Log, TEXT("Started Drawing Rune"));
+}
+
+void AEnchantingStation::StopDrawing()
+{
+	// Stop drawing logic here
+	UE_LOG(LogTemp, Log, TEXT("Stopped Drawing Rune"));
+}
+
+
 
 
 
@@ -57,20 +77,20 @@ void AEnchantingStation::BindInput(APlayerController* PC)
 		UE_LOG(LogTemp, Error, TEXT("ForgingStation: No EnhancedInputComponent"));
 		return;
 	}
-	/*
+	
 	CachedEnhancedInput->BindAction(
-		StartForgingAction,
+		DrawRuneAction,
 		ETriggerEvent::Started,
 		this,
-		&AForgingStation::StartForgingSequence
+		&AEnchantingStation::StartDrawing
 	);
 
 	CachedEnhancedInput->BindAction(
-		HammerAction,
-		ETriggerEvent::Started,
+		DrawRuneAction,
+		ETriggerEvent::Completed,
 		this,
-		&AForgingStation::ProcessHammerInput
-	);*/
+		&AEnchantingStation::StopDrawing
+	);
 }
 
 void AEnchantingStation::UnbindInput()

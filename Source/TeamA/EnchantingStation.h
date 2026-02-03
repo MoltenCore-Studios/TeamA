@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Workstation.h"
+#include "InputAction.h"
 #include "EnchantingStation.generated.h"
 
 
@@ -22,10 +23,19 @@ class TEAMA_API AEnchantingStation : public AWorkstation
 	GENERATED_BODY()
 	
 public:
-	TArray<FRunePoint> Stroke;
+
+	static constexpr float CanvasSize = 512.f;
+
+	//Cached Player Controller
+	UPROPERTY()
+	class APlayerController* CachedPC = nullptr;
+
+	// Draw input action
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* DrawRuneAction;
 
 protected:
-	//virtual void Tick(float DeltaTime) override;
+	virtual void Tick(float DeltaTime) override;
 	virtual void Enter_Implementation(class ACharacter* PC) override;
 	//virtual void Exit_Implementation(class ACharacter* PC) override;
 
@@ -33,12 +43,13 @@ protected:
 	void UnbindInput();
 
 	// Input
-	UPROPERTY(EditAnywhere, Category = "Input")
-	class UInputAction* StartForgingAction;
-	UPROPERTY(EditAnywhere, Category = "Input")
-	class UInputAction* HammerAction;
 
 	// cached input component
 	UPROPERTY()
 	class UEnhancedInputComponent* CachedEnhancedInput = nullptr;
+
+	// Start and stop drawing
+	void StartDrawing();
+	void StopDrawing();
+	
 };
