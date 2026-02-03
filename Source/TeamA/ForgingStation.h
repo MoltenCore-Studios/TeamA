@@ -164,12 +164,6 @@ public:
 	virtual void Exit_Implementation(class ACharacter* Character) override;
 
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	UInputMappingContext* ForgingMappingContext;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	int32 ForgingMappingPriority = 2;
-
 	// UI Widget for forging
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<class UUserWidget> ForgingWidgetClass;

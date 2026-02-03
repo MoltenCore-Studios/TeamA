@@ -51,19 +51,6 @@ void AForgingStation::Enter_Implementation(ACharacter* Character)
 		return;
 	}
 
-	ULocalPlayer* LP = PC->GetLocalPlayer();
-	if (!LP) return;
-
-	UEnhancedInputLocalPlayerSubsystem* Subsystem =
-		ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LP);
-
-	if (Subsystem && ForgingMappingContext)
-	{
-		Subsystem->AddMappingContext(
-			ForgingMappingContext,
-			ForgingMappingPriority
-		);
-	}
 
 	BindInput(PC);
 
@@ -146,16 +133,6 @@ void AForgingStation::Exit_Implementation(ACharacter* Character)
 		return;
 	}
 
-	ULocalPlayer* LP = PC->GetLocalPlayer();
-	if (!LP) return;
-
-	UEnhancedInputLocalPlayerSubsystem* Subsystem =
-		ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LP);
-
-	if (Subsystem && ForgingMappingContext)
-	{
-		Subsystem->RemoveMappingContext(ForgingMappingContext);
-	}
 
 	UnbindInput();
 
